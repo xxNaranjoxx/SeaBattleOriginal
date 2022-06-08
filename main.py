@@ -20,53 +20,74 @@ class barco():
       self.posx = posx
       self.posy = posy
 
-   def  get_tamano(self):
-      return self.tamano
+class Casilla():
+   def __init__(self, fila , columna , l_cuadrado, interfaz):
+      self.interfaz = interfaz
+      self.l_cuadrado = l_cuadrado
+      self.fila = fila
+      self.columna = columna
+      self.posx = 50
+      self.posy = 50
 
-   def  get_posx(self):
-      return self.posx
+   def posCuadro(self):
+      self.posx = self.fila * self.l_cuadrado
+      self.posy = self.columna * self.l_cuadrado
 
-   def  get_posy(self):
-      return self.posy
+   def dibujoCasilla(self):
+      # self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
+      if(self.posx == 50):
+         self.interfaz.create_rectangle(self.posx , self.posy , self.l_cuadrado,  self.posy + self.l_cuadrado,fill="white")
+      elif (self.posy == 50):
+         self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.l_cuadrado, fill="white")
+      else:
+         self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado, fill="white")
 
-   def  set_posy(self):
-      return self.posy
-
-   def  set_posy(self):
-      return self.posy
-
-   def  set_posy(self, x):
-      self.posy = x
+   def validaClickCasilla(self, event):
+      if( ( event.x > self.posx  and event.x < (self.posx + self.l_cuadrado)) and  ( event.y > self.posy  and event.y < (self.posy + self.l_cuadrado)) ):
+         if (self.posx == 50):
+            self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="red")
+         elif (self.posy == 50):
+            self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="red")
+         else:
+            self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.posy + self.l_cuadrado, fill="red")
 
 
 
 class Juego():
+   matrizJugador = []
    def __init__(self, l_cuadrado):
       self.l_cuadrado = l_cuadrado
 
-
       def display_coordinates(event):
-         if event.x <= 40 and event.y <= 40:
+         for fila in self.matrizJugador:
+            for casilla in fila:
+               casilla.validaClickCasilla(event)
 
-            print("hola")
+
+
 
       self.ventana = tkinter.Tk()
       self.ventana.title("Juego")
-      self.ventana.wm_geometry(f"{str(l_cuadrado * 10)}x{str(l_cuadrado * 10)}")
+      self.ventana.geometry("400x600")
       self.ventana.resizable(0,0)
       self.ventana.bind("<Button-1>", display_coordinates)
 
       self.ventana1 = tkinter.Tk()
       self.ventana1.title("PC")
-      self.ventana1.wm_geometry(f"{str(l_cuadrado * 10)}x{str(l_cuadrado * 10)}")
+      self.ventana1.geometry("400x600")
       self.ventana1.resizable(0, 0)
-      self.ventana1.bind("<Button-1>", display_coordinates)
 
-      self.interfaz1 = tkinter.Canvas(self.ventana1)
-      self.interfaz1.pack(fill="both", expand=True)
+      self.interfaz1 = tkinter.Canvas(self.ventana1, width=400, height=400, cursor="target")
+      self.interfaz1.place(x=0,y=0)
 
-      self.interfaz = tkinter.Canvas(self.ventana)
-      self.interfaz.pack(fill="both", expand=True)
+
+      self.agua = tkinter.Canvas(self.ventana,width=800, height=800, bg="lightblue")
+      self.agua.place(x=0, y=0)
+      self.interfaz = tkinter.Canvas(self.ventana, width=299, height=299, cursor="target")
+      self.interfaz.place(x=0,y=0)
+
+      self.crearMatrizJugador()
+      self.dibujoTableroJ()
 
 
 
@@ -75,17 +96,28 @@ class Juego():
    def __call__(self):
       self.ventana.mainloop()
 
-   def dibujoTableroJ(self):
-      #self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
+   def crearMatrizJugador(self):
       for i in range(10):
+
+         self.matrizJugador.append([])
          for j in range(10):
-            self.interfaz.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill="white")
+            self.matrizJugador[i].append(Casilla(i,j,30,self.interfaz))
+
+   def dibujoTableroJ(self):
+      # self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
+      for fila in self.matrizJugador:
+         for casilla in fila:
+            casilla.posCuadro()
+            casilla.dibujoCasilla()
+
+
+            """self.interfaz.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill="white")"""
 
    def dibujoTableroC(self):
       #self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
       for i in range(10):
          for j in range(10):
-            self.interfaz1.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill="red")
+            self.interfaz1.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill=bubbleGum)
 
 
 
@@ -98,13 +130,13 @@ def main():
    ventana.config(bg="white")
    ventana.resizable(False, False) #Tamaño
 
-   def paso():
+   """def paso():
       while barraProgreso["value"] != 100:
          for x in range(5):
             barraProgreso["value"] += 20
             splashCanva.update_idletasks()
             time.sleep(1)
-      registro()
+      registro()"""
 
 
    # Se crea Canva
@@ -118,8 +150,8 @@ def main():
    barraProgreso = ttk.Progressbar(splashCanva, orient=HORIZONTAL, length = 780, mode = "determinate")
    barraProgreso.place(x=10, y=575)
 
-   botonBarra = Button(splashCanva, text="Entrar al Juego",font=("Cooper black", 15), command=paso)  # Salon de la fama
-   botonBarra.place(x=320 , y=299)
+   """botonBarra = Button(splashCanva, text="Entrar al Juego",font=("Cooper black", 15), command=paso)  # Salon de la fama
+   botonBarra.place(x=320 , y=299)"""
 
 
 
@@ -143,7 +175,7 @@ def main():
       ayudaB.place(x=110, y=5)
 
 
-      def registroJug():
+      """def registroJug():
 
          if nombres.get() == "":
             messagebox.showwarning("Nombre", "Error en el nombre")
@@ -152,10 +184,14 @@ def main():
             archivo = open("Jugadores1.txt", "a")
             archivo.write(nombres.get() + "-")
             archivo.close()
-            Leerjuego()
+            Leerjuego()"""
 
-      imprimirJugador = Button(my_canvas, text="Registrar y Jugar", command=registroJug) # Regsitrar y Jugar
+      imprimirJugador = Button(my_canvas, text="Registrar y Jugar", command=Leerjuego) # Regsitrar y Jugar
       imprimirJugador.place(x=195, y=335)
+
+
+   botonBarra = Button(splashCanva, text="Entrar al Juego", font=("Cooper black", 15), command=registro)  # Salon de la fama
+   botonBarra.place(x=320, y=299)
 
 
 
@@ -253,8 +289,8 @@ def main():
       registroAB.place(x=160, y=5)
 
    def Leerjuego():
-      personaJuego = Juego(40)
-      personaJuego.dibujoTableroJ()
+      personaJuego = Juego(30)
+      #personaJuego.dibujoTableroJ()
       personaJuego.dibujoTableroC()
       personaJuego()
 
