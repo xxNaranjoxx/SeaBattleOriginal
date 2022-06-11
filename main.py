@@ -8,17 +8,53 @@ bubbleGum = "#FFBED2"
 lightBlue = "#98D3E3"
 
 
-
 class balas():
-   def __init__(self):
-      posX = self.posX
-      posY = self.posY
+   def __init__(self, fila , columna , l_cuadrado, interfaz1):
+      self.interfaz1 = interfaz1
+      self.l_cuadrado = l_cuadrado
+      self.fila = fila
+      self.columna = columna
+      self.posx = 50
+      self.posy = 50
+
 
 class barco():
-   def __init__(self,tamano,posx, posy):
+   def __init__(self,tamano,posx, posy, interfaz):
       self.tamano = tamano
       self.posx = posx
       self.posy = posy
+      self.interfaz =  interfaz
+
+class casillaPC():
+   def __init__(self, fila , columna , l_cuadrado, interfaz1):
+      self.interfaz1 = interfaz1
+      self.l_cuadrado = l_cuadrado
+      self.fila = fila
+      self.columna = columna
+      self.posx = 50
+      self.posy = 50
+
+   def posCuadro(self):
+      self.posx = self.fila * self.l_cuadrado
+      self.posy = self.columna * self.l_cuadrado
+
+   def dibujoCasillaC(self):
+      # self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
+      if(self.posx == 50):
+         self.interfaz1.create_rectangle(self.posx , self.posy , self.l_cuadrado,  self.posy + self.l_cuadrado,fill="white")
+      elif (self.posy == 50):
+         self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.l_cuadrado, fill="white")
+      else:
+         self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado, fill="white")
+
+   def validaClickCasillaC(self, event):
+      if( ( event.x > self.posx  and event.x < (self.posx + self.l_cuadrado)) and  ( event.y > self.posy  and event.y < (self.posy + self.l_cuadrado)) ):
+         if (self.posx == 50):
+            self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="red")
+         elif (self.posy == 50):
+            self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="red")
+         else:
+            self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.posy + self.l_cuadrado, fill="red")
 
 class Casilla():
    def __init__(self, fila , columna , l_cuadrado, interfaz):
@@ -33,7 +69,7 @@ class Casilla():
       self.posx = self.fila * self.l_cuadrado
       self.posy = self.columna * self.l_cuadrado
 
-   def dibujoCasilla(self):
+   def dibujoCasillaJ(self):
       # self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
       if(self.posx == 50):
          self.interfaz.create_rectangle(self.posx , self.posy , self.l_cuadrado,  self.posy + self.l_cuadrado,fill="white")
@@ -42,27 +78,54 @@ class Casilla():
       else:
          self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado, fill="white")
 
-   def validaClickCasilla(self, event):
+
+   def validaClickCasillaJ(self, event):
       if( ( event.x > self.posx  and event.x < (self.posx + self.l_cuadrado)) and  ( event.y > self.posy  and event.y < (self.posy + self.l_cuadrado)) ):
          if (self.posx == 50):
             self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="red")
          elif (self.posy == 50):
             self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="red")
+         elif self.posx < 30 and self.posy < 30:
+            self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado,fill="blue")
          else:
             self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.posy + self.l_cuadrado, fill="red")
 
 
 
+
+
 class Juego():
    matrizJugador = []
+   matrizPC = []
    def __init__(self, l_cuadrado):
       self.l_cuadrado = l_cuadrado
 
-      def display_coordinates(event):
+      def display_coordinatesJ(event):
          for fila in self.matrizJugador:
             for casilla in fila:
-               casilla.validaClickCasilla(event)
+               casilla.validaClickCasillaJ(event)
 
+      """def horizontal_vertical(event):
+         for fila in self.matrizJugador:
+            for casilla in fila:
+               casilla.validaClickCasillaJ(event)"""
+
+      def display_coordinatesC(event):
+         for fila in self.matrizPC:
+            for casillaPC in fila:
+               casillaPC.validaClickCasillaC(event)
+
+      def prueba():
+         print("hola")
+
+      def prueba2():
+         print("hola")
+         print("hola")
+
+      def prueba3():
+         print("hola")
+         print("hola")
+         print("hola")
 
 
 
@@ -70,14 +133,18 @@ class Juego():
       self.ventana.title("Juego")
       self.ventana.geometry("400x600")
       self.ventana.resizable(0,0)
-      self.ventana.bind("<Button-1>", display_coordinates)
+      self.ventana.bind("<Button-1>", display_coordinatesJ)
+      #self.ventana.bind("<space>",horizontal_vertical)
 
       self.ventana1 = tkinter.Tk()
       self.ventana1.title("PC")
       self.ventana1.geometry("400x600")
       self.ventana1.resizable(0, 0)
+      self.ventana1.bind("<Button-1>", display_coordinatesC)
 
-      self.interfaz1 = tkinter.Canvas(self.ventana1, width=400, height=400, cursor="target")
+      self.agua1 = tkinter.Canvas(self.ventana1, width=800, height=600, bg="lightblue")
+      self.agua1.place(x=0, y=0)
+      self.interfaz1 = tkinter.Canvas(self.ventana1, width=299, height=299, cursor="target")
       self.interfaz1.place(x=0,y=0)
 
 
@@ -86,38 +153,62 @@ class Juego():
       self.interfaz = tkinter.Canvas(self.ventana, width=299, height=299, cursor="target")
       self.interfaz.place(x=0,y=0)
 
+
+
+      self.tamano1 = Button(self.agua, text="Tamaño 1",bd="5").place(x=100,y=350)
+      self.tamano2 = Button(self.ventana, text="Tamaño 2", bd="5", command=prueba2)
+      self.tamano2.place(x=200, y=350)
+      self.tamano3 = Button(self.ventana, text="Tamaño 3", bd="5", command=prueba)
+      self.tamano3.place(x=300, y=350)
+
       self.crearMatrizJugador()
       self.dibujoTableroJ()
-
-
-
+      self.crearMatrizComputador()
+      self.dibujoTableroC()
+      self.ventana.mainloop()
 
 
    def __call__(self):
       self.ventana.mainloop()
 
+   def __call__(self):
+      self.ventana1.mainloop()
+
+
+
+
+
+
    def crearMatrizJugador(self):
       for i in range(10):
-
          self.matrizJugador.append([])
          for j in range(10):
             self.matrizJugador[i].append(Casilla(i,j,30,self.interfaz))
+
+   def crearMatrizComputador(self):
+      for i in range(10):
+         self.matrizPC.append([])
+         for j in range(10):
+            self.matrizPC[i].append(casillaPC(i,j,30,self.interfaz1))
 
    def dibujoTableroJ(self):
       # self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
       for fila in self.matrizJugador:
          for casilla in fila:
             casilla.posCuadro()
-            casilla.dibujoCasilla()
+            casilla.dibujoCasillaJ()
 
 
             """self.interfaz.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill="white")"""
 
    def dibujoTableroC(self):
       #self.interfaz.create_rectangle(x0,y0,x1,y1,fill=null)
-      for i in range(10):
-         for j in range(10):
-            self.interfaz1.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill=bubbleGum)
+      for fila in self.matrizPC:
+         for casillaPC in fila:
+            casillaPC.posCuadro()
+            casillaPC.dibujoCasillaC()
+            #self.interfaz1.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill=bubbleGum)
+
 
 
 
@@ -291,7 +382,7 @@ def main():
    def Leerjuego():
       personaJuego = Juego(30)
       #personaJuego.dibujoTableroJ()
-      personaJuego.dibujoTableroC()
+      #personaJuego.dibujoTableroC()
       personaJuego()
 
 
