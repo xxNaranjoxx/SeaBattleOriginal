@@ -19,11 +19,15 @@ class balas():
 
 
 class barco():
-   def __init__(self,tamano,posx, posy, interfaz):
+   def __init__(self,tamano,fila,columna,l_cuadrado, interfaz):
       self.tamano = tamano
-      self.posx = posx
-      self.posy = posy
-      self.interfaz =  interfaz
+      self.fila = fila
+      self.columna = columna
+      self.l_cuadrado = l_cuadrado
+      self.interfaz = interfaz
+
+      self.posx = 50
+      self.posy = 50
 
 class casillaPC():
    def __init__(self, fila , columna , l_cuadrado, interfaz1):
@@ -105,11 +109,6 @@ class Juego():
             for casilla in fila:
                casilla.validaClickCasillaJ(event)
 
-      """def horizontal_vertical(event):
-         for fila in self.matrizJugador:
-            for casilla in fila:
-               casilla.validaClickCasillaJ(event)"""
-
       def display_coordinatesC(event):
          for fila in self.matrizPC:
             for casillaPC in fila:
@@ -166,6 +165,7 @@ class Juego():
       self.crearMatrizComputador()
       self.dibujoTableroC()
       self.ventana.mainloop()
+
 
 
    def __call__(self):
