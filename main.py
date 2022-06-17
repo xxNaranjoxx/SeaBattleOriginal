@@ -36,8 +36,6 @@ class Casilla():
    def get_columna(self):
       return self.columna
 
-
-
    def posCuadro(self):
       self.posx = self.fila * self.l_cuadrado
       self.posy = self.columna * self.l_cuadrado
@@ -51,16 +49,16 @@ class Casilla():
       else:
          self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado, fill="lightblue")
 
-   def barco(self,event,tamano,typeGame, ):
+   def barco(self,event,tamano,typeGame):
          if typeGame == 0:
             if tamano == 1:
                if( ( event.x > self.posx  and event.x < (self.posx + self.l_cuadrado)) and  ( event.y > self.posy  and event.y < (self.posy + self.l_cuadrado)) ):
                   if (self.posx == 0):
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="red")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="grey")
                   elif (self.posy == 0):
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="red")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="grey")
                   else:
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.posy + self.l_cuadrado, fill="red")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado,  self.posy + self.l_cuadrado, fill="grey")
 
             elif tamano == 2:
                if ((event.x > self.posx and event.x < (self.posx + self.l_cuadrado)) and (event.y > self.posy and event.y < (self.posy + self.l_cuadrado))):
@@ -73,11 +71,11 @@ class Casilla():
             elif tamano == 3:
                if( ( event.x > self.posx  and event.x < (self.posx + self.l_cuadrado)) and  ( event.y > self.posy  and event.y < (self.posy + self.l_cuadrado)) ):
                   if (self.posx == 0):
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="blue")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="grey")
                   elif (self.posy == 0):
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + 90, self.l_cuadrado, fill="blue")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + 90, self.l_cuadrado, fill="grey")
                   else:
-                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + 90,  self.posy + self.l_cuadrado, fill="blue")
+                     self.interfaz.create_rectangle(self.posx, self.posy, self.posx + 90,  self.posy + self.l_cuadrado, fill="grey")
             else:
                print("ERROR")
 
@@ -87,6 +85,7 @@ class Casilla():
 
 
    def validaClickCasilla(self, event, typeGame):
+
       color = "red"
 
       if typeGame == 0:
@@ -104,12 +103,6 @@ class Casilla():
 
       else:
          return False
-
-
-
-
-
-
 
 
 class Juego():
@@ -143,6 +136,8 @@ class Juego():
       self.tamanoBarcoJugador = 0
       self.contTamanoJugador = 0
 
+      self.contadorBalasJugador = 0
+
       self.turnoBoolean = True
 
 
@@ -150,20 +145,22 @@ class Juego():
       self.matrizComputador = []
 
       def display_coordinatesJugador(event):
-
          self.cont += 1
          if self.cont <= 3:
             self.typeGame = 0
          elif self.cont == 4:
             self.typeGame = 1
-            self.barcosComputadora(7,9)
+            self.barcosComputadora(7, 9)
          elif self.turnoBoolean:
-            pass
-            #Casilla.validaClickCasilla()
-
-
-
-
+            self.balasComputador(9, 9)
+            self.turnoBoolean = True
+         else:
+            self.contadorBalasJugador += 1
+            if self.contadorBalasJugador == 1:
+               for fila in self.matrizJugador:
+                  for casilla in fila:
+                     casilla.validaClickCasilla(event, 1)
+               self.turnoBoolean = False
 
 
 
@@ -200,6 +197,24 @@ class Juego():
 
 
       def display_coordinatesComputador(event):
+         self.cont += 1
+         if self.cont <= 3:
+            self.typeGame = 0
+         elif self.cont == 4:
+            self.typeGame = 1
+            self.barcosComputadora(7, 9)
+         elif self.turnoBoolean:
+            self.contadorBalasJugador += 1
+            if self.contadorBalasJugador == 1:
+               for fila in self.matrizJugador:
+                  for casilla in fila:
+                     casilla.validaClickCasilla(event, 1)
+               self.turnoBoolean = False
+         else:
+            self.balasComputador(9, 9)
+
+
+
 
          for fila in self.matrizComputador:
             for casilla in fila:
@@ -223,11 +238,6 @@ class Juego():
    def __call__(self):
       self.ventana1.mainloop()
 
-   def turnos(self,interfaz):
-      self.interfaz = interfaz
-      suTurno = tkinter.Label(self.interfaz, text="Su Turno ", font=("Cooper black", 12), bg=lightBlue, fg="black")
-      suTurno.place(x=100, y=400)
-
    def barcosComputadora(self,filas, columnas):
       contador = 0
       while contador <= 3 :
@@ -245,46 +255,40 @@ class Juego():
             if self.posx == 0:
                self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="Black")
             elif self.posy == 0:
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="blue")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="Black")
             else:
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado,fill="blue")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado,fill="Black")
          elif contador == 2:
             if (self.posx == 0):
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + 60, fill="grey")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + 60, fill="Black")
             elif (self.posy == 0):
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 60, self.l_cuadrado, fill="grey")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 60, self.l_cuadrado, fill="Black")
             else:
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 60, self.posy + self.l_cuadrado,fill="grey")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 60, self.posy + self.l_cuadrado,fill="Black")
          elif contador == 3:
             if (self.posx == 1):
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado,fill="red")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado,fill="Black")
             elif (self.posy == 0):
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 90, self.l_cuadrado, fill="red")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 90, self.l_cuadrado, fill="Black")
             else:
-               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 90, self.posy + self.l_cuadrado,fill="red")
+               self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + 90, self.posy + self.l_cuadrado,fill="Black")
 
-   def balasComputador(self):
-      self.fila = 9
-      self.columna = 9
+   def balasComputador(self,filas, columnas):
+      self.fila = filas
+      self.columna = columnas
       auxiliarColum = random.randint(0, self.columna)
       auxliarFila = random.randint(0, self.fila)
+
+      self.posx = auxliarFila * self.l_cuadrado
+      self.posy = auxiliarColum * self.l_cuadrado
+
+      print(auxiliarColum,"-", auxliarFila)
       if self.posx == 0:
-         self.interfaz1.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado,
-                                         fill="Black")
+         self.interfaz.create_rectangle(self.posx, self.posy, self.l_cuadrado, self.posy + self.l_cuadrado, fill="red")
       elif self.posy == 0:
-         self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado,
-                                         fill="blue")
+         self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.l_cuadrado, fill="red")
       else:
-         self.interfaz1.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado,
-                                         fill="blue")
-
-
-
-
-
-
-
-
+         self.interfaz.create_rectangle(self.posx, self.posy, self.posx + self.l_cuadrado, self.posy + self.l_cuadrado,fill="red")
 
 
    def crearMatrizJugador(self):
@@ -315,6 +319,8 @@ class Juego():
             casilla.posCuadro()
             casilla.dibujoCasilla()
             #self.interfaz1.create_rectangle(i * self.l_cuadrado,j * self.l_cuadrado,(i + 1) * self.l_cuadrado,(j + 1) * self.l_cuadrado,fill=bubbleGum)"""
+
+
 
 
 
